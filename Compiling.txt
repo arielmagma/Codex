@@ -1,0 +1,2 @@
+g++ -O2 -DNDEBUG menu.cpp File.cpp fileLibrary.cpp ErrorStatus.cpp -o Codex.exe
+strip Codex.exe
