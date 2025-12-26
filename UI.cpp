@@ -30,7 +30,7 @@ void UI::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
                 cout << filter;
             }
 
-            for (int i = 0; i < 52 - filter.length(); i++) cout << " ";
+            for (int j = 0; j < 52 - filter.length(); j++) cout << " ";
                 cout << "|" << endl;
         }
     else
@@ -45,15 +45,19 @@ void UI::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
 
 void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
 {
+    string output = "";
+
     if (!debugMode)
     {
-        normalMenu(codex.getPath(), codex.getFilters());
-        printFiles(codex.getFiles(), selectedFile);
-        cout << "| Mode: Normal ";
-        cout << "| Files: " << codex.getFiles().size() << " ";
-        cout << "| Filters: " << codex.getFilters().size() << " ";
-        for (int i = 0; i < 59 - 15 - 10 - std::to_string(codex.getFiles().size()).length() - 1 -11 - std::to_string(codex.getFilters().size()).length() - 1; i++) cout << " ";
-        cout << "|\n+---------------------------------------------------------+" << endl;
+        output += normalMenu(codex.getPath(), codex.getFilters());
+        output += printFiles(codex.getFiles(), selectedFile);
+        output.append("| Mode: Normal ");
+        output.append("| Files: " + std::to_string(codex.getFiles().size()) + " ");
+        output.append("| Filters: " + std::to_string(codex.getFilters().size()) + " ");
+        for (int i = 0; i < 59 - 15 - 10 - std::to_string(codex.getFiles().size()).length() - 1 -11 - std::to_string(codex.getFilters().size()).length() - 1; i++) output.append(" ");
+        output.append("|\n+---------------------------------------------------------+\n");
+
+        cout << output;
     }
     else
     {
@@ -62,7 +66,7 @@ void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
     }
 }
 
-void UI::normalMenu(const string& path, const vector<std::string>& filters)
+string UI::normalMenu(const string& path, const vector<std::string>& filters)
 {
     string output = "";
     int lineSize = 46; // First filter's line (after "Filters: ") is 46 characters long
@@ -73,7 +77,7 @@ void UI::normalMenu(const string& path, const vector<std::string>& filters)
     if (path.length() < 43)
     {        
         output.append("| Root folder: " + path);
-        for (size_t i = 0; i < 43 - path.length(); i++) cout << " ";
+        for (size_t i = 0; i < 43 - path.length(); i++) output.append(" ");
     }
     else
     {
@@ -130,10 +134,10 @@ void UI::normalMenu(const string& path, const vector<std::string>& filters)
     output.append("|  [U] Update Path  [S] Select Files  [B] Go Back         |\n");
     output.append("+---------------------------------------------------------+\n");
 
-    cout << output;
+    return output;
 }
 
-void UI::printFiles(const vector<File>& files, int selectedFile)
+string UI::printFiles(const vector<File>& files, int selectedFile)
 {
     string output = "";
     output.append("| Files:                                                  |\n");
@@ -159,7 +163,7 @@ void UI::printFiles(const vector<File>& files, int selectedFile)
         }
     }
     output.append("+---------------------------------------------------------+\n");
-    cout << output;
+    return output;
 }
 
 void UI::debugMenu(const string& path, const vector<std::string>& filters)

@@ -30,14 +30,21 @@ void fileLibrary::scanFolder()
     {
         if (!entry.is_directory()) 
         {
-            this->files.push_back(
-            File(
-                'f',                                       // file type
-                entry.path().filename().stem().string(),   // file name
-                entry.path().string(),                     // full path
-                entry.path().extension().string(),         // extension
-                std::filesystem::file_size(entry.path()))  // size in bytes
-            );
+            try
+            {
+                this->files.push_back(
+                File(
+                    'f',                                       // file type
+                    entry.path().filename().stem().string(),   // file name
+                    entry.path().string(),                     // full path
+                    entry.path().extension().string(),         // extension
+                    std::filesystem::file_size(entry.path()))  // size in bytes
+                );
+            }
+            catch(...)
+            {
+                continue;
+            }
         }
         else
         {
