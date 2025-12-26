@@ -98,7 +98,7 @@ int main()
                         case 'B':
                         case 'b':
                             {
-                                codex.updatePath(std::filesystem::path(codex.getPath()).parent_path().string());
+                                std::filesystem::path(codex.getPath()).has_parent_path() ? codex.updatePath(std::filesystem::path(codex.getPath()).parent_path().string()) : codex.updatePath("");
                             }
                             break;
                         case 72: // Up arrow
