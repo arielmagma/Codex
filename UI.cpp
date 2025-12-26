@@ -64,14 +64,15 @@ void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
 
 void UI::normalMenu(const string& path, const vector<std::string>& filters)
 {
+    string output = "";
     int lineSize = 46; // First filter's line (after "Filters: ") is 46 characters long
     int currentSize = 0;
 
     // Print header
-    cout << "+---------------------------------------------------------+" << endl;
+    output.append("+---------------------------------------------------------+\n");
     if (path.length() < 43)
     {        
-        cout << "| Root folder: " << path;
+        output.append("| Root folder: " + path);
         for (size_t i = 0; i < 43 - path.length(); i++) cout << " ";
     }
     else
@@ -87,18 +88,18 @@ void UI::normalMenu(const string& path, const vector<std::string>& filters)
             }
             new_path = "..." + new_path.substr(pos + 1); // format the new path
         }
-        cout << "| Root folder: " << new_path;
-        for (size_t i = 0; i < 43 - new_path.length(); i++) cout << " ";
+        output.append("| Root folder: " + new_path);
+        for (size_t i = 0; i < 43 - new_path.length(); i++) output.append(" ");
     }
-    cout << "|" << endl;
+    output.append("|\n");
 
     // Print filters
-    cout << "| Filters: ";
+    output.append("| Filters: ");
     if (filters.size() == 0)
     {
-        cout << "None" ;
-        for (size_t i = 0; i < 51 - 8; i++) cout << " ";
-        cout << "|" << endl;
+        output.append("None");
+        for (size_t i = 0; i < 51 - 8; i++) output.append(" ");
+        output.append("|\n");
     }
     else
     {
@@ -107,55 +108,58 @@ void UI::normalMenu(const string& path, const vector<std::string>& filters)
         {
             if (currentSize + filter.length() + 1 >= lineSize)
             {
-                for (int i = 0; i < lineSize - currentSize + 1; i++) 
-                    cout << " ";
-                cout << "|\n";
+                for (int i = 0; i < lineSize - currentSize + 1; i++) output.append(" ");
+                output.append("|\n");
 
-                cout << "| ";
+                output.append("| ");
                 currentSize = 2; // "| " counts as 2 characters
                 lineSize = 57; // Size of each new line after the first one
             }
 
-            cout << filter << " ";
+            output.append(filter + " ");
             currentSize += filter.length() + 1;
         }
 
         // Fill remaining space for the last line
-        for (int i = 0; i < lineSize - currentSize + 1; i++) cout << " ";
-        cout << "|" << endl;
+        for (int i = 0; i < lineSize - currentSize + 1; i++) output.append(" ");
+        output.append("|\n");
     }
     
-    cout << "+---------------------------------------------------------+" << endl;
-    cout << "|  [F] Filters  [R] Refresh [Q] Quit  [D] Debug Mode      |" << endl;
-    cout << "|  [U] Update Path  [S] Select Files  [B] Go Back         |" << endl;
-    cout << "+---------------------------------------------------------+" << endl;
+    output.append("+---------------------------------------------------------+\n");
+    output.append("|  [F] Filters  [R] Refresh [Q] Quit  [D] Debug Mode      |\n");
+    output.append("|  [U] Update Path  [S] Select Files  [B] Go Back         |\n");
+    output.append("+---------------------------------------------------------+\n");
+
+    cout << output;
 }
 
 void UI::printFiles(const vector<File>& files, int selectedFile)
 {
-    cout << "| Files:                                                  |" << endl;
+    string output = "";
+    output.append("| Files:                                                  |\n");
     for (int i = 0; i < files.size(); i++)
     {
         const File& file = files[i];
 
         if (i == selectedFile)
-            cout << "|  [X] ";
+            output.append("|  [X] ");
         else
-            cout << "|  [ ] ";
-        file.printFile();
+            output.append("|  [ ] ");
+        output.append(file.getPrintFile());
         if (file.getFileType() == 'f')
         {
             if (file.getFileName().length() + file.getFileExtension().length() + 1 + std::to_string(file.getFileSize()).length() + file.getFileSizeType().length() <= 50)
-                for (int i = 0; i < 50 - file.getFileName().length() - file.getFileExtension().length() - 1 - std::to_string(file.getFileSize()).length() - file.getFileSizeType().length(); i++) cout << " ";
-            cout << " |" << endl;
+                for (int i = 0; i < 50 - file.getFileName().length() - file.getFileExtension().length() - 1 - std::to_string(file.getFileSize()).length() - file.getFileSizeType().length(); i++) output.append(" ");
+            output.append(" |\n");
         }
         else if (file.getFileType() == 'd')
         {
-            for (int i = 0; i < 50 - file.getFileName().length(); i++) cout << " ";
-            cout << " |" << endl;
+            for (int i = 0; i < 50 - file.getFileName().length(); i++) output.append(" ");
+            output.append(" |\n");
         }
     }
-    cout << "+---------------------------------------------------------+" << endl;
+    output.append("+---------------------------------------------------------+\n");
+    cout << output;
 }
 
 void UI::debugMenu(const string& path, const vector<std::string>& filters)

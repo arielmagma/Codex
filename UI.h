@@ -1,8 +1,10 @@
 #include <iostream>
+#include <string>
 #include "fileLibrary.h"
 
 using std::cout;
 using std::endl;
+using std::string;
 
 class UI
 {

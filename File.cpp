@@ -84,8 +84,16 @@ void File::printFile() const
         std::cout << this->fileName << this->fileExtension;
 }
 
+const string File::getPrintFile() const
+{
+    if (this->fileType == 'f')
+        return this->fileName + this->fileExtension + " " + std::to_string(this->fileSize) + this->fileSizeType;
+    else
+        return this->fileName + this->fileExtension;
+}
+
 std::ostream& operator<<(std::ostream& os, const File& file)
 {
     os << file.getFileName() << '\t' << file.getFileExtension() << '\t' << file.getFilePath() << '\t' << file.getFileSize();
     return os;
-}   
+}
