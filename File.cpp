@@ -79,16 +79,22 @@ void File::printFile() const
 {
     if (this->fileType == 'f')
         std::cout << this->fileName << this->fileExtension << " " << this->fileSize << this->fileSizeType;
-    else
+    else if (this->fileType == 'd')
         std::cout << this->fileName << this->fileExtension;
+    else if (this->fileType == 'h')
+        std::cout << this->filePath;
 }
 
 std::string File::getPrintFile() const
 {
     if (this->fileType == 'f')
         return this->fileName + this->fileExtension + " " + std::to_string(this->fileSize) + this->fileSizeType;
-    else
+    else if (this->fileType == 'd')
         return this->fileName + this->fileExtension;
+    else if (this->fileType == 'h')
+        return this->filePath;
+    
+    return "Unrecognized file type";
 }
 
 std::ostream& operator<<(std::ostream& os, const File& file)

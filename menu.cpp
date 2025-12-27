@@ -98,16 +98,19 @@ int main()
                         case 's':
                             {
                                 File file = codex.getFiles()[selectedFile];
+                                if (file.getFileType() == 'h')
+                                    codex.updatePath(file.getFilePath());
                                 if (file.getFileType() == 'd')
                                     codex.updatePath(codex.getPath() + "\\" + file.getFileName());
-                                else
+                                else if (file.getFileType() == 'f')
                                     codex.openFile(file);
                             }
                             break;
                         case 'B':
                         case 'b':
-                            {
-                                std::filesystem::path(codex.getPath()).has_parent_path() ? codex.updatePath(std::filesystem::path(codex.getPath()).parent_path().string()) : codex.updatePath("");
+                            { // Check if current path is root path, else just return parent path
+                                bool root = (std::filesystem::path(codex.getPath()).root_path() == std::filesystem::path(codex.getPath()));
+                                root ? codex.updatePath("") : codex.updatePath(std::filesystem::path(codex.getPath()).parent_path().string());
                             }
                             break;
                         case UP_ARROW: // Up arrow

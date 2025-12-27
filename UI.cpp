@@ -62,9 +62,9 @@ void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
         output += normalMenu(codex.getPath(), filters);
         output += printFiles(files, selectedFile);
         output.append("| Mode: Normal ");
-        output.append("| Files: " + std::to_string(files.size()) + " ");
+        output.append("| Entries: " + std::to_string(files.size()) + " ");
         output.append("| Filters: " + std::to_string(filters.size()) + " ");
-        for (int i = 0; i < 59 - 15 - 10 - std::to_string(files.size()).length() - 1 -11 - std::to_string(filters.size()).length() - 1; i++) output.append(" ");
+        for (int i = 0; i < 59 - 40 - std::to_string(files.size()).length() - std::to_string(filters.size()).length(); i++) output.append(" ");
         output.append("|\n+---------------------------------------------------------+\n");
 
         cout << output;
@@ -169,6 +169,11 @@ string UI::printFiles(const vector<File>& files, int selectedFile)
         else if (file.getFileType() == 'd')
         {
             for (int i = 0; i < 50 - file.getFileName().length(); i++) output.append(" ");
+            output.append(" |\n");
+        }
+        else if (file.getFileType() == 'h')
+        {
+            for (int i = 0; i < 50 - file.getFilePath().length(); i++) output.append(" ");
             output.append(" |\n");
         }
     }

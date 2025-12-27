@@ -41,6 +41,7 @@ class fileLibrary
         const bool checkExtensionFilter(const std::string& type) const;
         const bool checkSizeFilter(const std::uintmax_t& size) const;
         const bool checkTypeFilter(const std::string& type) const;
+        std::vector<std::string> getDrives() const;
 };
 
 #define NAME_FILTER 0

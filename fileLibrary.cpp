@@ -1,10 +1,12 @@
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
-#ifdef _WIN32
+
+#ifdef _WIN32 // If on windows us shell execute instead of system as shell execute is more efficent
 #include <windows.h>
 #include <shellapi.h>
 #endif
+
 #include "fileLibrary.h"
 
 fileLibrary::fileLibrary(const std::string& folderPath)
@@ -17,10 +19,11 @@ fileLibrary::fileLibrary(const std::string& folderPath)
 
 void fileLibrary::updatePath(const std::string& newPath)
 {
-    this->folderPath = newPath;
+    folderPath = newPath;
     scanFolder();
-    this->filteredCacheValid = false;
+    filteredCacheValid = false;
 }
+
 
 void fileLibrary::setMode(int mode)
 {
@@ -32,38 +35,57 @@ void fileLibrary::scanFolder()
 {
     this->files.clear();
 
-    for (const auto& entry : std::filesystem::directory_iterator(this->folderPath)) 
+    if (!this->folderPath.empty())
     {
-        if (!entry.is_directory()) 
+        for (const auto& entry : std::filesystem::directory_iterator(this->folderPath)) 
         {
-            try
+            if (!entry.is_directory()) 
+            {
+                try
+                {
+                    this->files.push_back(
+                    File(
+                        'f',                                       // file type
+                        entry.path().filename().stem().string(),   // file name
+                        entry.path().string(),                     // full path
+                        entry.path().extension().string(),         // extension
+                        std::filesystem::file_size(entry.path()))  // size in bytes
+                    );
+                }
+                catch(...)
+                {
+                    continue;
+                }
+            }
+            else
             {
                 this->files.push_back(
                 File(
-                    'f',                                       // file type
-                    entry.path().filename().stem().string(),   // file name
-                    entry.path().string(),                     // full path
-                    entry.path().extension().string(),         // extension
-                    std::filesystem::file_size(entry.path()))  // size in bytes
+                    'd',
+                    entry.path().filename().stem().string(),
+                    entry.path().string(),
+                    "",
+                    0)
                 );
             }
-            catch(...)
-            {
-                continue;
-            }
         }
-        else
+    }
+    else
+    {
+        for (const auto& entry : getDrives())
         {
             this->files.push_back(
             File(
-                'd',
-                entry.path().filename().stem().string(),
-                entry.path().string(),
+                'h',
+                entry,
+                entry,
                 "",
-                0)
+                0
+            )
             );
         }
     }
+
     // Invalidate filtered cache after changing underlying file list
     this->filteredCacheValid = false;
 }
@@ -303,4 +325,21 @@ void fileLibrary::openFile(const File& file)
         system(command.c_str());
     }
 #endif
+}
+
+std::vector<std::string> fileLibrary::getDrives() const
+{
+    std::vector<std::string> drives;
+
+    for (char letter = 'A'; letter <= 'Z'; ++letter) 
+    {
+        std::string root = std::string(1, letter) + ":\\";
+        if (std::filesystem::exists(root))
+        {
+            drives.push_back(root);
+            std::cout << drives[drives.size() - 1] << std::endl;
+        }
+    }
+
+    return drives;
 }
