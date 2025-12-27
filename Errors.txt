@@ -1,5 +1,0 @@
-Code    |   Description
-------------------------------
-0       |   No error
-1       |   File not found in path or could not be opened
-2       |   Error while getting flie length

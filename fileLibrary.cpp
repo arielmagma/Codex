@@ -1,12 +1,16 @@
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
 #include "fileLibrary.h"
 
 fileLibrary::fileLibrary(const std::string& folderPath)
 {
     this->folderPath = folderPath;
-    this->nameFilter = "\0";
+    this->nameFilter = "";
     this->fileTypeFilter = '\0';
     scanFolder();
 }
@@ -15,11 +19,13 @@ void fileLibrary::updatePath(const std::string& newPath)
 {
     this->folderPath = newPath;
     scanFolder();
+    this->filteredCacheValid = false;
 }
 
 void fileLibrary::setMode(int mode)
 {
     this->debugMode = mode;
+    this->filteredCacheValid = false;
 }
 
 void fileLibrary::scanFolder()
@@ -58,6 +64,8 @@ void fileLibrary::scanFolder()
             );
         }
     }
+    // Invalidate filtered cache after changing underlying file list
+    this->filteredCacheValid = false;
 }
 
 void fileLibrary::printFiles()
@@ -99,6 +107,7 @@ void fileLibrary::addFilter(const std::string& filter, int type)
             this->fileTypeFilter = filter[0];
             break;
     }
+    this->filteredCacheValid = false;
 }
 
 void fileLibrary::removeFilter(const std::string& filter)
@@ -116,6 +125,8 @@ void fileLibrary::removeFilter(const std::string& filter)
     
     if (this->fileTypeFilter == filter[0]) // Check if filter fits the type filter
         this->fileTypeFilter = '\0';
+
+    this->filteredCacheValid = false;
 }
 
 std::vector<std::string> fileLibrary::getFilters() const
@@ -137,7 +148,7 @@ std::vector<std::string> fileLibrary::getFilters() const
     return allFilters;
 }
 
-const string& fileLibrary::getPath() const
+const std::string& fileLibrary::getPath() const
 {
     return this->folderPath;
 }
@@ -147,31 +158,35 @@ int fileLibrary::getMode() const
     return this->debugMode;
 }
 
-const std::vector<File> fileLibrary::getFiles() const
+const std::vector<File>& fileLibrary::getFiles() const
 {
-    std::vector <File> filteredFiles;
-    for (auto& file : this->files)
+    if (this->filteredCacheValid)
+        return this->filteredCache;
+
+    this->filteredCache.clear();
+    for (const auto& file : this->files)
     {
         if (checkNameFilter(file.getFileName()) && checkExtensionFilter(file.getFileExtension()) && checkSizeFilter(file.getRealFileSize()) && checkTypeFilter(std::string(1, file.getFileType())))
-            filteredFiles.push_back(file);
+            this->filteredCache.push_back(file);
     }
 
-    return filteredFiles;
+    this->filteredCacheValid = true;
+    return this->filteredCache;
 }
 
 
-const bool fileLibrary::checkNameFilter(const string& name) const
+const bool fileLibrary::checkNameFilter(const std::string& name) const
 {
-    if (this->nameFilter == "\0") // Check if there is name filter, if not then always return true
+    if (this->nameFilter.empty()) // no name filter => allow
         return true;
 
-    else if (name.size() == this->nameFilter.size()) // If the sizes are the same, check for equality
-        if (name == this->nameFilter)
-            return true;
+    if (name.size() == this->nameFilter.size() && name == this->nameFilter)
+        return true;
+
     return false;
 }
 
-const bool fileLibrary::checkExtensionFilter(const string& type) const
+const bool fileLibrary::checkExtensionFilter(const std::string& type) const
 {
     if (this->fileExtensionFilter.size() == 0) // If there are no type filters, always return true
         return true;
@@ -182,7 +197,7 @@ const bool fileLibrary::checkExtensionFilter(const string& type) const
     return false;
 }
 
-const bool fileLibrary::checkTypeFilter(const string& type) const
+const bool fileLibrary::checkTypeFilter(const std::string& type) const
 {
     return (this->fileTypeFilter == '\0' || type[0] == this->fileTypeFilter);
 }
@@ -248,25 +263,44 @@ const bool fileLibrary::checkSizeFilter(const std::uintmax_t& size) const
     return false;
 }
 
-void fileLibrary::openFile(File file)
+void fileLibrary::openFile(const File& file)
 {
-    string command;
+    std::string extension = file.getFileExtension();
+    std::string path = file.getFilePath();
 
-    string extension = file.getFileExtension();
-
+#ifdef _WIN32
     if (extension == ".exe")
     {
-        command = "cmd /c start \"" + file.getFileName() + "\" \"" + file.getFilePath() + "\"";
-        system(command.c_str());
+        ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWNORMAL);
+        return;
     }
     else if (extension == ".cpp" || extension == ".h")
     {
-        command = "code \"" + file.getFilePath() + "\"";
-        system(command.c_str()); 
+        // Try to open with VS Code via its CLI; falls back to ShellExecute if not available
+        std::string codeCmd = "code \"" + path + "\"";
+        if (system(codeCmd.c_str()) == 0)
+            return;
+
+        ShellExecuteA(NULL, "open", "code", path.c_str(), NULL, SW_SHOWNORMAL);
+        return;
     }
     else
     {
-        command = "explorer /select, " + file.getFilePath();
+        std::string args = "/select,\"" + path + "\"";
+        ShellExecuteA(NULL, "open", "explorer.exe", args.c_str(), NULL, SW_SHOWNORMAL);
+        return;
+    }
+#else
+    // Fallback for non-Windows: use system with quoted path
+    if (extension == ".cpp" || extension == ".h")
+    {
+        std::string command = "code \"" + path + "\"";
         system(command.c_str());
     }
+    else
+    {
+        std::string command = "xdg-open \"" + path + "\"";
+        system(command.c_str());
+    }
+#endif
 }

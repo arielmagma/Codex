@@ -2,17 +2,18 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe build active file",
-            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "label": "Building codex",
+            "command": "g++",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
+                "menu.cpp",
+                "File.cpp",
+                "fileLibrary.cpp",
+                "UI.cpp",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "Codex.exe"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "C:\\Users\\Cyber_Magshimim\\Documents\\Magshimim\\C++\\Codex"
             },
             "problemMatcher": [
                 "$gcc"

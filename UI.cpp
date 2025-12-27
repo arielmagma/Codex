@@ -1,4 +1,11 @@
 #include "UI.h"
+#include <vector>
+#include <string>
+
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
 
 void UI::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
 {
@@ -49,12 +56,15 @@ void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
 
     if (!debugMode)
     {
-        output += normalMenu(codex.getPath(), codex.getFilters());
-        output += printFiles(codex.getFiles(), selectedFile);
+        vector<File> files = codex.getFiles();
+        vector<string> filters = codex.getFilters();
+
+        output += normalMenu(codex.getPath(), filters);
+        output += printFiles(files, selectedFile);
         output.append("| Mode: Normal ");
-        output.append("| Files: " + std::to_string(codex.getFiles().size()) + " ");
-        output.append("| Filters: " + std::to_string(codex.getFilters().size()) + " ");
-        for (int i = 0; i < 59 - 15 - 10 - std::to_string(codex.getFiles().size()).length() - 1 -11 - std::to_string(codex.getFilters().size()).length() - 1; i++) output.append(" ");
+        output.append("| Files: " + std::to_string(files.size()) + " ");
+        output.append("| Filters: " + std::to_string(filters.size()) + " ");
+        for (int i = 0; i < 59 - 15 - 10 - std::to_string(files.size()).length() - 1 -11 - std::to_string(filters.size()).length() - 1; i++) output.append(" ");
         output.append("|\n+---------------------------------------------------------+\n");
 
         cout << output;

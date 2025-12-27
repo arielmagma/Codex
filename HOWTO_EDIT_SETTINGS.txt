@@ -1,0 +1,25 @@
+Recommended workflow: you don't need to edit settings.json when adding a new C++ script.
+
+Use the provided VS Code task that compiles the active file with g++:
+- The task is in .vscode/tasks.json and uses the variable ${file} (the currently active editor file).
+- To build the currently open file, press Ctrl+Shift+B (or run the "C/C++: g++.exe build active file" task).
+
+If you still want to add a specific task for a new script, edit .vscode/tasks.json:
+1. Open .vscode/tasks.json.
+2. Copy the existing task block and change the "label" and the "args" if you want a different output name. Example snippet:
+
+{
+    "type": "shell",
+    "label": "Build myscript.cpp",
+    "command": "C:/msys64/ucrt64/bin/g++.exe",
+    "args": ["-g", "${workspaceFolder}/path/to/myscript.cpp", "-o", "${workspaceFolder}/path/to/myscript.exe"],
+    "group": { "kind": "build", "isDefault": false },
+    "problemMatcher": ["$gcc"]
+}
+
+3. Save the file. You can now select that task from the Run Tasks menu.
+
+Notes and tips:
+- Prefer using the existing task with ${file} so you don't need to add tasks for each script.
+- If g++ is not at C:/msys64/ucrt64/bin/g++.exe on your machine, update the "command" path to your g++ executable location.
+- To make VS Code run a task automatically on save or on build, look into the "runOnSave" or extension-based automation; native automatic build on save isn't configured via settings.json by default.

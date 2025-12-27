@@ -2,45 +2,45 @@
 #include <string>
 #include <vector>
 
-using std::string;
-using std::vector;
-
 class fileLibrary
 {
     private:
         int debugMode = 0;
-        string folderPath;
-        vector<File> files;
+        std::string folderPath;
+        std::vector<File> files;
 
-        string nameFilter;
-        vector<string> fileExtensionFilter;
-        vector<string> fileLengthFilter;
-        vector<string> fileSizeFilter;
+        std::string nameFilter;
+        std::vector<std::string> fileExtensionFilter;
+        std::vector<std::string> fileLengthFilter;
+        std::vector<std::string> fileSizeFilter;
         char fileTypeFilter;
+        // cached filtered view to avoid repeated allocations
+        mutable std::vector<File> filteredCache;
+        mutable bool filteredCacheValid = false;
         
     public:
-        fileLibrary(const string& folderPath);
-        void updatePath(const string& newPath);
+        fileLibrary(const std::string& folderPath);
+        void updatePath(const std::string& newPath);
         void setMode(int mode);
 
         void scanFolder();
         
         void printFiles();
 
-        void addFilter(const string& filter, int type);
-        void removeFilter(const string& filter);
+        void addFilter(const std::string& filter, int type);
+        void removeFilter(const std::string& filter);
 
         std::vector<std::string> getFilters() const;
-        const string& getPath() const;
+        const std::string& getPath() const;
         int getMode() const;
-        const std::vector<File> getFiles() const;
-        void openFile(File file);
+        const std::vector<File>& getFiles() const;
+        void openFile(const File& file);
         
     private:
-        const bool checkNameFilter(const string& name) const;
-        const bool checkExtensionFilter(const string& type) const;
+        const bool checkNameFilter(const std::string& name) const;
+        const bool checkExtensionFilter(const std::string& type) const;
         const bool checkSizeFilter(const std::uintmax_t& size) const;
-        const bool checkTypeFilter(const string& type) const;
+        const bool checkTypeFilter(const std::string& type) const;
 };
 
 #define NAME_FILTER 0

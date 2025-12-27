@@ -1,5 +1,4 @@
 #include "File.h"
-#include "ErrorStatus.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdint>
@@ -51,7 +50,7 @@ const std::string& File::getFilePath() const
     return this->filePath;
 }
 
-const int File::getRealFileSize() const
+const std::uintmax_t File::getRealFileSize() const
 {
     return this->realFileSize;
 }
@@ -84,7 +83,7 @@ void File::printFile() const
         std::cout << this->fileName << this->fileExtension;
 }
 
-const string File::getPrintFile() const
+std::string File::getPrintFile() const
 {
     if (this->fileType == 'f')
         return this->fileName + this->fileExtension + " " + std::to_string(this->fileSize) + this->fileSizeType;

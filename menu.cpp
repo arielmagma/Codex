@@ -6,6 +6,9 @@
 
 #include "UI.h"
 
+#define UP_ARROW 72
+#define DOWN_ARROW 80
+
 using std::cout;
 using std::cin;
 using std::endl;
@@ -20,7 +23,7 @@ int main()
     char mode = 'N';
 
     string str = "";
-    char option = ' ';
+    int option = 0;
     int selectedFile = 0;
     int selectedFilter = 0;
 
@@ -44,7 +47,13 @@ int main()
         else if (mode == 'F')
             UI::printFilterMenu(codex.getFilters(), selectedFilter);
 
-        option = getch();
+        {
+            int ch = getch();
+            if (ch == 0 || ch == 224) // extended key prefix
+                ch = getch();
+            option = ch;
+        }
+
         switch (mode)
         {
             case 'N':
@@ -101,11 +110,11 @@ int main()
                                 std::filesystem::path(codex.getPath()).has_parent_path() ? codex.updatePath(std::filesystem::path(codex.getPath()).parent_path().string()) : codex.updatePath("");
                             }
                             break;
-                        case 72: // Up arrow
+                        case UP_ARROW: // Up arrow
                             selectedFile--; 
                             if (selectedFile < 0) selectedFile = codex.getFiles().size() - 1;
                             break;
-                        case 80: // Down arrow
+                        case DOWN_ARROW: // Down arrow
                             selectedFile++;
                                 if (selectedFile >= codex.getFiles().size()) selectedFile = 0;
                                 break;
@@ -125,7 +134,7 @@ int main()
 void FilterMode(fileLibrary& codex)
 {
     int selectedFilter = 0;
-    char option = ' ';
+    int option = ' ';
 
     while (true)
     {
@@ -145,65 +154,71 @@ void FilterMode(fileLibrary& codex)
                 cout << "| [S] Size                                                |" << endl;
                 cout << "+---------------------------------------------------------+" << endl;
 
-                option = getch();
-                switch(option)
                 {
-                    case 'N':
-                    case 'n':
+                    int sub = getch();
+                    if (sub == 0 || sub == 224)
+                        sub = getch();
+                    switch(sub)
                     {
-                        string filter;
-                        cout << "Enter name filter: ";
-                        cin >> filter;
-                        codex.addFilter(filter, 0);
+                        case 'N':
+                        case 'n':
+                        {
+                            string filter;
+                            cout << "Enter name filter: ";
+                            std::getline(cin >> std::ws, filter);
+                            codex.addFilter(filter, 0);
+                        }
+                            break;
+                        case 'E':
+                        case 'e':
+                        {
+                            string filter;
+                            cout << "Enter extension filter: ";
+                            std::getline(cin >> std::ws, filter);
+                            codex.addFilter(filter, 1);
+                        }
+                            break;
+                        case 'S':
+                        case 's':
+                        {
+                            string filter;
+                            cout << "Enter size filter: ";
+                            std::getline(cin >> std::ws, filter);
+                            codex.addFilter(filter, 2);
+                        }
+                            break;
+                        case 'T':
+                        case 't':
+                        {
+                            string filter;
+                            cout << "Enter type filter: ";
+                            std::getline(cin >> std::ws, filter);
+                            codex.addFilter(filter, 3);
+                        }
+                            break;
                     }
-                        break;
-                    case 'E':
-                    case 'e':
-                    {
-                        string filter;
-                        cout << "Enter extension filter: ";
-                        cin >> filter;
-                        codex.addFilter(filter, 1);
-                    }
-                        break;
-                    case 'S':
-                    case 's':
-                    {
-                        string filter;
-                        cout << "Enter size filter: ";
-                        cin >> filter;
-                        codex.addFilter(filter, 2);
-                    }
-                        break;
-                    case 'T':
-                    case 't':
-                    {
-                        string filter;
-                        cout << "Enter type filter: ";
-                        cin >> filter;
-                        codex.addFilter(filter, 3);
-                    }
-                        break;
                 }
             }
                 break;
             case 'R':
             case 'r':
+            {
                 if (codex.getFilters().size() == 0)
                     continue;
                 else
                     codex.removeFilter(codex.getFilters()[selectedFilter]);
                 break;
-            case 72: // Up arrow
+            case UP_ARROW: // Up arrow
                 selectedFilter--;
                 if (selectedFilter < 0)
                     selectedFilter = codex.getFilters().size() - 1;
                 break;
-            case 80: // Down arrow
+            case DOWN_ARROW: // Down arrow
                 selectedFilter++;
                     if (selectedFilter >= codex.getFilters().size())
                         selectedFilter = 0;
                     break;
+            }
         }
     }
 }
