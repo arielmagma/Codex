@@ -82,17 +82,48 @@ void File::printFile() const
     else if (this->fileType == 'd')
         std::cout << this->fileName << this->fileExtension;
     else if (this->fileType == 'h')
-        std::cout << this->filePath;
+        std::cout << this->fileName << " " << this->filePath;
 }
 
 std::string File::getPrintFile() const
 {
+    std::string temp = "";
     if (this->fileType == 'f')
-        return this->fileName + this->fileExtension + " " + std::to_string(this->fileSize) + this->fileSizeType;
+    {
+        std::string output = this->fileExtension + " " + std::to_string(this->fileSize) + this->fileSizeType;
+        if (this->fileName.size() + output.size() >= 50)
+        {
+            temp += "...";
+            size_t startIdx = this->fileName.size() - (50 - output.size() - 3);
+            temp += this->fileName.substr(startIdx);
+            return temp + output;
+        }
+        return this->fileName + output;
+    }
     else if (this->fileType == 'd')
-        return this->fileName + this->fileExtension;
+    {
+        std::string output = this->fileExtension;
+        if (this->fileName.size() + output.size() >= 50)
+        {
+            temp += "...";
+            size_t startIdx = this->fileName.size() - (50 - output.size() - 3);
+            temp += this->fileName.substr(startIdx);
+            return temp + output;
+        }
+        return this->fileName + output;
+    }
     else if (this->fileType == 'h')
-        return this->filePath;
+    {
+        std::string output = this->fileName;
+        if (this->fileName.size() + output.size() >= 50)
+        {
+            temp += "...";
+            size_t startIdx = this->fileName.size() - (50 - output.size() - 3);
+            temp += this->fileName.substr(startIdx);
+            return temp + output;
+        }
+        return this->fileName + output;
+    }
     
     return "Unrecognized file type";
 }

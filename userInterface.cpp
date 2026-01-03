@@ -1,4 +1,4 @@
-#include "UI.h"
+#include "userInterface.h"
 #include <vector>
 #include <string>
 
@@ -7,7 +7,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-void UI::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
+void userInterface::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
 {
     cout << "+---------------------------------------------------------+" << endl;
     cout << "|                     FILTER MENU                         |" << endl;
@@ -50,7 +50,7 @@ void UI::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
     cout << "+---------------------------------------------------------+" << endl;
 }
 
-void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
+void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
 {
     string output = "";
 
@@ -76,7 +76,7 @@ void UI::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
     }
 }
 
-string UI::normalMenu(const string& path, const vector<std::string>& filters)
+string userInterface::normalMenu(const string& path, const vector<std::string>& filters)
 {
     string output = "";
     int lineSize = 46; // First filter's line (after "Filters: ") is 46 characters long
@@ -147,7 +147,7 @@ string UI::normalMenu(const string& path, const vector<std::string>& filters)
     return output;
 }
 
-string UI::printFiles(const vector<File>& files, int selectedFile)
+string userInterface::printFiles(const vector<File>& files, int selectedFile)
 {
     string output = "";
     output.append("| Files:                                                  |\n");
@@ -173,7 +173,7 @@ string UI::printFiles(const vector<File>& files, int selectedFile)
         }
         else if (file.getFileType() == 'h')
         {
-            for (int i = 0; i < 50 - file.getFilePath().length(); i++) output.append(" ");
+            for (int i = 0; i < 50 - file.getFilePath().length() - file.getFileName().length() - 1; i++) output.append(" ");
             output.append(" |\n");
         }
     }
@@ -181,7 +181,7 @@ string UI::printFiles(const vector<File>& files, int selectedFile)
     return output;
 }
 
-void UI::debugMenu(const string& path, const vector<std::string>& filters)
+void userInterface::debugMenu(const string& path, const vector<std::string>& filters)
 {
     cout << "DEBUG MENU\n";
     cout << "Root folder: " << path << "\n";
@@ -196,7 +196,7 @@ void UI::debugMenu(const string& path, const vector<std::string>& filters)
     }
 }
 
-void UI::printDebugFiles(const vector<File>& files, int selectedFile)
+void userInterface::printDebugFiles(const vector<File>& files, int selectedFile)
 {
     cout << "DEBUG FILES LIST:" << endl;
     for (int i = 0; i < files.size(); i++)

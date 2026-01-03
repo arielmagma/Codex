@@ -4,7 +4,7 @@
 #include <conio.h>
 #include <filesystem>
 
-#include "UI.h"
+#include "userInterface.h"
 
 #define UP_ARROW 72
 #define DOWN_ARROW 80
@@ -29,10 +29,7 @@ int main()
 
     std::system("cls");
 
-    cout << "Enter root folder path: ";
-    std::getline(cin, str);
-
-    fileLibrary codex(str);
+    fileLibrary codex("C:\\");
 
     while (true)
     {
@@ -43,9 +40,9 @@ int main()
 
         std::system("cls"); // Print ui fitting for the current mode
         if (mode == 'N')
-            UI::printMenu(codex.getMode(), selectedFile, codex);
+            userInterface::printMenu(codex.getMode(), selectedFile, codex);
         else if (mode == 'F')
-            UI::printFilterMenu(codex.getFilters(), selectedFilter);
+            userInterface::printFilterMenu(codex.getFilters(), selectedFilter);
 
         {
             int ch = getch();

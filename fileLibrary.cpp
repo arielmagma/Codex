@@ -74,10 +74,18 @@ void fileLibrary::scanFolder()
     {
         for (const auto& entry : getDrives())
         {
+            std::string label = "No Label";
+            wchar_t volumeName[MAX_PATH] = {0};
+            if (GetVolumeInformationW(std::wstring(entry.begin(), entry.end()).c_str(),volumeName,MAX_PATH,nullptr,nullptr,nullptr,nullptr,0))
+            {
+                std::wstring wname(volumeName);
+                label = std::string(wname.begin(), wname.end());
+            }
+
             this->files.push_back(
             File(
                 'h',
-                entry,
+                label,
                 entry,
                 "",
                 0
@@ -337,7 +345,6 @@ std::vector<std::string> fileLibrary::getDrives() const
         if (std::filesystem::exists(root))
         {
             drives.push_back(root);
-            std::cout << drives[drives.size() - 1] << std::endl;
         }
     }
 

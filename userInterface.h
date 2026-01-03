@@ -3,7 +3,7 @@
 #include <vector>
 #include "fileLibrary.h"
 
-class UI
+class userInterface
 {
     public:
         static void printMenu(int debugMode, int selectedFile, const fileLibrary& codex);
