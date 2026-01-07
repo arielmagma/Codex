@@ -314,6 +314,11 @@ void fileLibrary::openFile(const File& file)
         ShellExecuteA(NULL, "open", "code", path.c_str(), NULL, SW_SHOWNORMAL);
         return;
     }
+    else if (extension == ".txt" || extension == ".log")
+    {
+        ShellExecuteA(NULL, "open", "notepad.exe", path.c_str(), NULL, SW_SHOWNORMAL);
+        return;
+    }
     else
     {
         std::string args = "/select,\"" + path + "\"";
@@ -325,6 +330,11 @@ void fileLibrary::openFile(const File& file)
     if (extension == ".cpp" || extension == ".h")
     {
         std::string command = "code \"" + path + "\"";
+        system(command.c_str());
+    }
+    else if (extension == ".txt" || extension == ".log")
+    {
+        std::string command = "gedit \"" + path + "\"";
         system(command.c_str());
     }
     else

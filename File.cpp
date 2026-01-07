@@ -114,15 +114,15 @@ std::string File::getPrintFile() const
     }
     else if (this->fileType == 'h')
     {
-        std::string output = this->fileName;
-        if (this->fileName.size() + output.size() >= 50)
+        std::string output = this->filePath;
+        if (this->fileName.size() + 1 + output.size() >= 50) // + 1 from space
         {
             temp += "...";
             size_t startIdx = this->fileName.size() - (50 - output.size() - 3);
             temp += this->fileName.substr(startIdx);
             return temp + output;
         }
-        return this->fileName + output;
+        return this->fileName + " " + output;
     }
     
     return "Unrecognized file type";
