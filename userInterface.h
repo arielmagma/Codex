@@ -15,3 +15,5 @@ class userInterface
         static void debugMenu(const std::string& path, const std::vector<std::string>& filters);
         static void printDebugFiles(const std::vector<File>& files, int selectedFile);
 };
+
+#define WINDOW 9

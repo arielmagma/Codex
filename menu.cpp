@@ -29,6 +29,7 @@ int main()
 
     std::system("cls");
 
+    cout << "\e[8;10;59t"; // Resize console window
     fileLibrary codex("C:\\");
 
     while (true)
@@ -138,6 +139,8 @@ void FilterMode(fileLibrary& codex)
 
     while (true)
     {
+        system("cls");
+        userInterface::printFilterMenu(codex.getFilters(), selectedFilter);
         option = getch();
 
         switch (option)

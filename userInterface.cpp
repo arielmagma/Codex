@@ -16,7 +16,28 @@ void userInterface::printFilterMenu(const vector<std::string>& filters, int sele
     cout << "+---------------------------------------------------------+" << endl;
 
     if (filters.size() != 0)
-        for (int i = 0; i < filters.size(); i++)
+    {    
+        int start = 0;
+        int end = filters.size();
+        if (filters.size() > WINDOW) // Calculate the window of files to show (defined in userInterface.h)
+        {
+            start = selectedFilter - WINDOW / 2;
+            end = start + WINDOW;
+
+            if (start < 0)
+            {
+                start = 0;
+                end = WINDOW;
+            }
+
+            if (end > filters.size())
+            {
+                end = filters.size();
+                start = filters.size() - WINDOW;
+            }
+        }
+
+        for (int i = start; i < end; i++) // Iterate through the files in the calculated window
         {
             const string& filter = filters[i];
             
@@ -40,6 +61,7 @@ void userInterface::printFilterMenu(const vector<std::string>& filters, int sele
             for (int j = 0; j < 52 - filter.length(); j++) cout << " ";
                 cout << "|" << endl;
         }
+    }
     else
         cout << "| No active filters                                       |" << endl;
     
@@ -151,7 +173,29 @@ string userInterface::printFiles(const vector<File>& files, int selectedFile)
 {
     string output = "";
     output.append("| Files:                                                  |\n");
-    for (int i = 0; i < files.size(); i++)
+
+    int start = 0;
+    int end = files.size();
+
+    if (files.size() > WINDOW) // Calculate the window of files to show (defined in userInterface.h)
+    {
+        start = selectedFile - WINDOW / 2;
+        end = start + WINDOW;
+
+        if (start < 0)
+        {
+            start = 0;
+            end = WINDOW;
+        }
+
+        if (end > files.size())
+        {
+            end = files.size();
+            start = files.size() - WINDOW;
+        }
+    }
+
+    for (int i = start; i < end; i++) // Iterate through the files in the calculated window
     {
         const File& file = files[i];
 
