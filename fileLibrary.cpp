@@ -9,6 +9,8 @@
 
 #include "fileLibrary.h"
 
+#include "../Optic/optic.cpp"
+
 fileLibrary::fileLibrary(const std::string& folderPath)
 {
     this->folderPath = folderPath;
@@ -317,6 +319,12 @@ void fileLibrary::openFile(const File& file)
     else if (extension == ".txt" || extension == ".log")
     {
         ShellExecuteA(NULL, "open", "notepad.exe", path.c_str(), NULL, SW_SHOWNORMAL);
+        return;
+    }
+    else if (extension == ".png")
+    {
+        std::string quotedPath = "\"" + path + "\"";
+        HINSTANCE result = ShellExecuteA(NULL, "open", "C:\\Users\\Ariel\\Desktop\\Personal\\Optic\\optic.exe", quotedPath.c_str(), NULL, SW_SHOWNORMAL);
         return;
     }
     else
