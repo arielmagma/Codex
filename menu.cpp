@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #include "userInterface.h"
+#include "Config.h"
 
 #define UP_ARROW 72
 #define DOWN_ARROW 80
@@ -19,7 +20,7 @@ void FilterMode(fileLibrary& codex);
 
 int main()
 {
-    vector<fileLibrary> tabs;
+    Config settings;
     char mode = 'N';
 
     string str = "";
@@ -29,8 +30,9 @@ int main()
 
     std::system("cls");
 
-    cout << "\e[8;10;59t"; // Resize console window
-    fileLibrary codex("C:\\");
+    std::string command = "\e[8;" + std::to_string(12 + settings.getFilesToShow()) + ";59t";
+    cout << command; // Resize console window
+    fileLibrary codex(settings.getBasicPath());
 
     while (true)
     {
@@ -41,9 +43,9 @@ int main()
 
         std::system("cls"); // Print ui fitting for the current mode
         if (mode == 'N')
-            userInterface::printMenu(codex.getMode(), selectedFile, codex);
+            userInterface::printMenu(codex.getMode(), selectedFile, codex, settings.getFilesToShow());
         else if (mode == 'F')
-            userInterface::printFilterMenu(codex.getFilters(), selectedFilter);
+            userInterface::printFilterMenu(codex.getFilters(), selectedFilter, settings.getFilesToShow());
 
         {
             int ch = getch();
@@ -140,7 +142,7 @@ void FilterMode(fileLibrary& codex)
     while (true)
     {
         system("cls");
-        userInterface::printFilterMenu(codex.getFilters(), selectedFilter);
+        userInterface::printFilterMenu(codex.getFilters(), selectedFilter, 9);
         option = getch();
 
         switch (option)

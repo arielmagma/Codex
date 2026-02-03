@@ -7,7 +7,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-void userInterface::printFilterMenu(const vector<std::string>& filters, int selectedFilter)
+void userInterface::printFilterMenu(const vector<std::string>& filters, int selectedFilter, int WINDOW)
 {
     cout << "+---------------------------------------------------------+" << endl;
     cout << "|                     FILTER MENU                         |" << endl;
@@ -72,7 +72,7 @@ void userInterface::printFilterMenu(const vector<std::string>& filters, int sele
     cout << "+---------------------------------------------------------+" << endl;
 }
 
-void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary& codex)
+void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary& codex, int WINDOW)
 {
     string output = "";
 
@@ -82,7 +82,7 @@ void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary
         vector<string> filters = codex.getFilters();
 
         output += normalMenu(codex.getPath(), filters);
-        output += printFiles(files, selectedFile);
+        output += printFiles(files, selectedFile, WINDOW);
         output.append("| Mode: Normal ");
         output.append("| Entries: " + std::to_string(files.size()) + " ");
         output.append("| Filters: " + std::to_string(filters.size()) + " ");
@@ -169,7 +169,7 @@ string userInterface::normalMenu(const string& path, const vector<std::string>& 
     return output;
 }
 
-string userInterface::printFiles(const vector<File>& files, int selectedFile)
+string userInterface::printFiles(const vector<File>& files, int selectedFile, int WINDOW)
 {
     string output = "";
     output.append("| Files:                                                  |\n");

@@ -324,7 +324,7 @@ void fileLibrary::openFile(const File& file)
     else if (extension == ".png")
     {
         std::string quotedPath = "\"" + path + "\"";
-        HINSTANCE result = ShellExecuteA(NULL, "open", "C:\\Users\\Ariel\\Desktop\\Personal\\Optic\\optic.exe", quotedPath.c_str(), NULL, SW_SHOWNORMAL);
+        HINSTANCE result = ShellExecuteA(NULL, "open", "..Optic\\optic.exe", quotedPath.c_str(), NULL, SW_SHOWNORMAL);
         return;
     }
     else
