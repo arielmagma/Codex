@@ -1,4 +1,7 @@
+#pragma once
 #include "File.h"
+#include "Config.h"
+#include "userInterface.h"
 #include <string>
 #include <vector>
 
@@ -14,12 +17,14 @@ class fileLibrary
         std::vector<std::string> fileLengthFilter;
         std::vector<std::string> fileSizeFilter;
         char fileTypeFilter;
-        // cached filtered view to avoid repeated allocations
-        mutable std::vector<File> filteredCache;
-        mutable bool filteredCacheValid = false;
+
+        std::vector<File> filteredCache;
+        bool filteredCacheValid = false;
+
+        Config settings;
         
     public:
-        fileLibrary(const std::string& folderPath);
+        fileLibrary(const Config& settings);
         void updatePath(const std::string& newPath);
         void setMode(int mode);
 
@@ -33,8 +38,10 @@ class fileLibrary
         std::vector<std::string> getFilters() const;
         const std::string& getPath() const;
         int getMode() const;
-        const std::vector<File>& getFiles() const;
+        const std::vector<File>& getFiles();
         void openFile(const File& file);
+
+        void updateScreenSize();
         
     private:
         const bool checkNameFilter(const std::string& name) const;

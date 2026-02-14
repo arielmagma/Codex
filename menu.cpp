@@ -4,11 +4,11 @@
 #include <conio.h>
 #include <filesystem>
 
-#include "userInterface.h"
-#include "Config.h"
+#include "fileLibrary.h"
 
 #define UP_ARROW 72
 #define DOWN_ARROW 80
+#define SCREEN_WIDTH 59
 
 using std::cout;
 using std::cin;
@@ -30,10 +30,7 @@ int main()
 
     std::system("cls");
 
-    std::string command = "\e[8;" + std::to_string(12 + settings.getFilesToShow()) + ";59t";
-    cout << command; // Resize console window
-    fileLibrary codex(settings.getBasicPath());
-
+    fileLibrary codex(settings);
     while (true)
     {
         if (codex.getFiles().empty())
@@ -99,9 +96,13 @@ int main()
                             {
                                 File file = codex.getFiles()[selectedFile];
                                 if (file.getFileType() == 'h')
+                                {
                                     codex.updatePath(file.getFilePath());
+                                }
                                 if (file.getFileType() == 'd')
+                                {
                                     codex.updatePath(codex.getPath() + "\\" + file.getFileName());
+                                }
                                 else if (file.getFileType() == 'f')
                                     codex.openFile(file);
                             }
@@ -121,6 +122,22 @@ int main()
                             selectedFile++;
                                 if (selectedFile >= codex.getFiles().size()) selectedFile = 0;
                                 break;
+                        case 'C':
+                        case 'c':
+                            std::string temp;
+                            cout << "Enter 1 to set current path as base, enter 2 to update files to show" << std::endl;
+                            cin >> temp;
+                            if (temp == "1")
+                                settings.setBasicPath(codex.getPath());
+                            else if (temp == "2")
+                            {
+                                std::cout << "Enter how much files to show: ";
+                                std::cin >> option;
+                                settings.setFilesToShow(option);
+                                codex.updateScreenSize();
+                            }
+
+                            break;
                         }
                     }
                     break;

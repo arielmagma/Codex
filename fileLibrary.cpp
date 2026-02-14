@@ -11,12 +11,17 @@
 
 #include "../Optic/optic.cpp"
 
-fileLibrary::fileLibrary(const std::string& folderPath)
+#define SCREEN_WIDTH 59
+
+fileLibrary::fileLibrary(const Config& settings)
 {
-    this->folderPath = folderPath;
+    this->folderPath = settings.getBasicPath();
+    this->settings = settings;
     this->nameFilter = "";
     this->fileTypeFilter = '\0';
     scanFolder();
+    std::cout << "\033[8;" << 11 + settings.getFilesToShow() << ";" << SCREEN_WIDTH << "t";
+    updateScreenSize();
 }
 
 void fileLibrary::updatePath(const std::string& newPath)
@@ -24,6 +29,7 @@ void fileLibrary::updatePath(const std::string& newPath)
     folderPath = newPath;
     scanFolder();
     filteredCacheValid = false;
+    updateScreenSize();
 }
 
 
@@ -190,7 +196,7 @@ int fileLibrary::getMode() const
     return this->debugMode;
 }
 
-const std::vector<File>& fileLibrary::getFiles() const
+const std::vector<File>& fileLibrary::getFiles()
 {
     if (this->filteredCacheValid)
         return this->filteredCache;
@@ -367,4 +373,15 @@ std::vector<std::string> fileLibrary::getDrives() const
     }
 
     return drives;
+}
+
+void fileLibrary::updateScreenSize()
+{
+    if (this->getFiles().size() < this->settings.getFilesToShow())
+    {
+        int y = 11 + int((this->getFiles().size() >= settings.getFilesToShow()) ? settings.getFilesToShow() : this->getFiles().size());
+        userInterface::updateScreenSize(SCREEN_WIDTH, y);
+    }
+    else
+        userInterface::updateScreenSize(SCREEN_WIDTH, 11 + settings.getFilesToShow());
 }

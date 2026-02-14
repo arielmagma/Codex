@@ -1,4 +1,5 @@
 #include "userInterface.h"
+#include "fileLibrary.h"
 #include <vector>
 #include <string>
 
@@ -6,6 +7,11 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+
+void userInterface::updateScreenSize(int x, int y)
+{
+    cout << "\033[8;" << y << ";" << x << "t";
+}
 
 void userInterface::printFilterMenu(const vector<std::string>& filters, int selectedFilter, int WINDOW)
 {
@@ -69,10 +75,10 @@ void userInterface::printFilterMenu(const vector<std::string>& filters, int sele
     cout << "| Status: Filter Management                               |" << endl;
     cout << "| Use arrows keys to navigate filters                     |" << endl;
     cout << "| Remove Filter will remove the selected filter           |" << endl;
-    cout << "+---------------------------------------------------------+" << endl;
+    cout << "+---------------------------------------------------------+";
 }
 
-void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary& codex, int WINDOW)
+void userInterface::printMenu(int debugMode, int selectedFile, fileLibrary& codex, int WINDOW)
 {
     string output = "";
 
@@ -87,7 +93,7 @@ void userInterface::printMenu(int debugMode, int selectedFile, const fileLibrary
         output.append("| Entries: " + std::to_string(files.size()) + " ");
         output.append("| Filters: " + std::to_string(filters.size()) + " ");
         for (int i = 0; i < 59 - 40 - std::to_string(files.size()).length() - std::to_string(filters.size()).length(); i++) output.append(" ");
-        output.append("|\n+---------------------------------------------------------+\n");
+        output.append("|\n+---------------------------------------------------------+");
 
         cout << output;
     }
@@ -162,8 +168,8 @@ string userInterface::normalMenu(const string& path, const vector<std::string>& 
     }
     
     output.append("+---------------------------------------------------------+\n");
-    output.append("|  [F] Filters  [R] Refresh [Q] Quit  [D] Debug Mode      |\n");
-    output.append("|  [U] Update Path  [S] Select Files  [B] Go Back         |\n");
+    output.append("|  [U] Update Path    [B] Go Back    [S] Select Files     |\n");
+    output.append("|  [F] Filters    [R] Refresh    [C] Config    [Q] Quit   |\n");
     output.append("+---------------------------------------------------------+\n");
 
     return output;
