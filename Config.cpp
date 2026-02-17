@@ -13,9 +13,9 @@ Config::Config()
         {
             filesToShow =  std::stoi(getStringAfter(line, "FILES_TO_SHOW="));
         }
-        else if (startsWith(line, "BASIC_PATH="))
+        else if (startsWith(line, "BASE_PATH="))
         {
-            basicPath = getStringAfter(line, "BASIC_PATH=");
+            basePath = getStringAfter(line, "BASE_PATH=");
         }
     }
 
@@ -27,7 +27,7 @@ Config::~Config()
     std::ofstream file("config.txt");
 
     file << "FILES_TO_SHOW=" << filesToShow << std::endl;
-    file << "BASIC_PATH=" << basicPath << std::endl;
+    file << "BASE_PATH=" << basePath << std::endl;
 
     file.close();
 }
@@ -68,12 +68,20 @@ void Config::setFilesToShow(int filesToShow)
     this->filesToShow = filesToShow;
 }
 
-std::string Config::getBasicPath() const
+std::string Config::getBasePath() const
 {
-    return basicPath;
+    return basePath;
 }
 
-void Config::setBasicPath(const std::string& basicPath)
+void Config::setBasePath(const std::string& basePath)
 {
-    this->basicPath = basicPath;
+    this->basePath = basePath;
+}
+
+std::vector<std::string> Config::getConfigSettings()
+{
+    std::vector<std::string> configSettings;
+    configSettings.push_back("Base Path: " + basePath);
+    configSettings.push_back("Display Window: " + std::to_string(filesToShow));
+    return configSettings;
 }

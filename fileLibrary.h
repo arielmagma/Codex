@@ -21,10 +21,10 @@ class fileLibrary
         std::vector<File> filteredCache;
         bool filteredCacheValid = false;
 
-        Config settings;
+        Config* settings;
         
     public:
-        fileLibrary(const Config& settings);
+        fileLibrary(Config* settings);
         void updatePath(const std::string& newPath);
         void setMode(int mode);
 
@@ -42,13 +42,20 @@ class fileLibrary
         void openFile(const File& file);
 
         void updateScreenSize();
-        
+
+        std::vector<std::string> getConfigs() const;
+        void setConfig(const std::vector<std::string>& configs);
+
+        Config getConfig() const;
+
     private:
         const bool checkNameFilter(const std::string& name) const;
         const bool checkExtensionFilter(const std::string& type) const;
         const bool checkSizeFilter(const std::uintmax_t& size) const;
         const bool checkTypeFilter(const std::string& type) const;
         std::vector<std::string> getDrives() const;
+
+        bool handleConfigUpdates(const std::string& field, const std::string& value);
 };
 
 #define NAME_FILTER 0

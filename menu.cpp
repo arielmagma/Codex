@@ -17,6 +17,7 @@ using std::string;
 using std::vector;
 
 void FilterMode(fileLibrary& codex);
+void ConfigMenu(fileLibrary& codex);
 
 int main()
 {
@@ -30,7 +31,7 @@ int main()
 
     std::system("cls");
 
-    fileLibrary codex(settings);
+    fileLibrary codex(&settings);
     while (true)
     {
         if (codex.getFiles().empty())
@@ -42,7 +43,7 @@ int main()
         if (mode == 'N')
             userInterface::printMenu(codex.getMode(), selectedFile, codex, settings.getFilesToShow());
         else if (mode == 'F')
-            userInterface::printFilterMenu(codex.getFilters(), selectedFilter, settings.getFilesToShow());
+            {userInterface::printFilterMenu(codex.getFilters(), selectedFilter, settings.getFilesToShow());}
 
         {
             int ch = getch();
@@ -124,25 +125,15 @@ int main()
                                 break;
                         case 'C':
                         case 'c':
-                            std::string temp;
-                            cout << "Enter 1 to set current path as base, enter 2 to update files to show" << std::endl;
-                            cin >> temp;
-                            if (temp == "1")
-                                settings.setBasicPath(codex.getPath());
-                            else if (temp == "2")
-                            {
-                                std::cout << "Enter how much files to show: ";
-                                std::cin >> option;
-                                settings.setFilesToShow(option);
-                                codex.updateScreenSize();
-                            }
-
+                            ConfigMenu(codex);
+                            codex.updateScreenSize();
                             break;
                         }
                     }
                     break;
                 case 'F':
                     FilterMode(codex);
+                    codex.updateScreenSize();
                     mode = 'N';
                     break;
         }
@@ -243,4 +234,71 @@ void FilterMode(fileLibrary& codex)
             }
         }
     }
+}
+
+void ConfigMenu(fileLibrary& codex)
+{
+    std::vector<std::string> config = codex.getConfigs();
+    bool saved = true;
+    char option = ' ';
+    int selectedConfig = 0;
+
+    while (option != 'b' && option != 'B')
+    {
+        std::system("cls");
+        userInterface::printConfigMenu(config, selectedConfig, codex.getConfig().getFilesToShow(), (saved) ? "Saved" : "Not saved");
+        option = getch();
+
+        switch (option)
+        {
+            case UP_ARROW:
+            {
+                if (selectedConfig < codex.getConfigs().size() - 1)
+                    selectedConfig++;
+                else
+                    selectedConfig = 0;
+                break;
+            }
+            case DOWN_ARROW:
+            {
+                if (selectedConfig > 0)
+                    selectedConfig--;
+                else
+                    selectedConfig = codex.getConfigs().size() - 1;
+                break;
+            }
+            case 's':
+            case 'S':
+            {
+                codex.setConfig(config);
+                saved = true;
+                break;
+            }
+            case 'u':
+            case 'U':
+            {
+                std::string update, temp;
+                cout << "| Update field:                                           |" << endl;
+                cout << "| " << config[selectedConfig] << std::string(56 - config[selectedConfig].length(), ' ') << '|' << endl;
+                cout << "+---------------------------------------------------------+" << endl;
+
+                cin >> update;
+
+                int i = 0;
+                cout << config[selectedConfig] << endl;
+                while (config[selectedConfig][i - 1] != ':')
+                {
+                    temp += config[selectedConfig][i];
+                    i++;
+                }
+
+                update = temp + " " + update;
+                config[selectedConfig] = update;
+                saved = false;
+                break;
+            }
+            default: break;
+        }
+    }
+    codex.setConfig(config);
 }

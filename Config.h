@@ -2,12 +2,13 @@
 #define CODEX_CONFIG_H
 
 #include <string>
+#include <vector>
 
 class Config
 {
     private:
         int filesToShow;
-        std::string basicPath;
+        std::string basePath;
 
     public:
         Config();
@@ -16,8 +17,10 @@ class Config
         int getFilesToShow() const;
         void setFilesToShow(int filesToShow);
 
-        std::string getBasicPath() const;
-        void setBasicPath(const std::string& basicPath);
+        std::string getBasePath() const;
+        void setBasePath(const std::string& basicPath);
+
+        std::vector<std::string> getConfigSettings();
 
     private:
         static bool startsWith(const std::string & s, const std::string & prefix);

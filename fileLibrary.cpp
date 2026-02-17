@@ -8,19 +8,20 @@
 #endif
 
 #include "fileLibrary.h"
+#include <fstream>
 
 #include "../Optic/optic.cpp"
 
 #define SCREEN_WIDTH 59
 
-fileLibrary::fileLibrary(const Config& settings)
+fileLibrary::fileLibrary(Config* settings)
 {
-    this->folderPath = settings.getBasicPath();
+    this->folderPath = settings->getBasePath();
     this->settings = settings;
     this->nameFilter = "";
     this->fileTypeFilter = '\0';
     scanFolder();
-    std::cout << "\033[8;" << 11 + settings.getFilesToShow() << ";" << SCREEN_WIDTH << "t";
+    std::cout << "\033[8;" << 11 + settings->getFilesToShow() << ";" << SCREEN_WIDTH << "t";
     updateScreenSize();
 }
 
@@ -377,11 +378,72 @@ std::vector<std::string> fileLibrary::getDrives() const
 
 void fileLibrary::updateScreenSize()
 {
-    if (this->getFiles().size() < this->settings.getFilesToShow())
+    int filesToDisplay = std::min((int)this->getFiles().size(), this->settings->getFilesToShow());
+
+    int baseHeight = 11;
+    int totalHeight = baseHeight + filesToDisplay;
+
+    userInterface::updateScreenSize(SCREEN_WIDTH, totalHeight);
+}
+
+std::vector<std::string> fileLibrary::getConfigs() const
+{
+    return this->settings->getConfigSettings();
+}
+
+void fileLibrary::setConfig(const std::vector<std::string> &configs)
+{
+    std::string field, value;
+    int i = 0;
+
+    for (const auto& config : configs)
     {
-        int y = 11 + int((this->getFiles().size() >= settings.getFilesToShow()) ? settings.getFilesToShow() : this->getFiles().size());
-        userInterface::updateScreenSize(SCREEN_WIDTH, y);
+        field = "";
+        value = "";
+
+        i = 0;
+        while (config[i] != ':')
+            {field += config[i++];}
+
+        i += 2;
+        while (i < config.size())
+            value += config[i++];
+
+        handleConfigUpdates(field, value);
     }
-    else
-        userInterface::updateScreenSize(SCREEN_WIDTH, 11 + settings.getFilesToShow());
+}
+
+bool fileLibrary::handleConfigUpdates(const std::string& field, const std::string& value)
+{
+    if (field == "Display Window")
+    {
+        int window = -1;
+        try{ window = std::stoi(value); }
+        catch(...){ }
+
+        if (window == -1) return false;
+        else
+        {
+            this->settings->setFilesToShow(window);
+            return true;
+        }
+    }
+    else if (field == "Base Path")
+    {
+        if (std::filesystem::exists(value))
+        {
+            this->settings->setBasePath(value);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+Config fileLibrary::getConfig() const
+{
+    return *this->settings;
 }

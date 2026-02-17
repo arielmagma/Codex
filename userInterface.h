@@ -11,6 +11,7 @@ class userInterface
     public:
         static void printMenu(int debugMode, int selectedFile, fileLibrary& codex, int WINDOW);
         static void printFilterMenu(const std::vector<std::string>& filters, int selectedFilter, int WINDOW);
+        static void printConfigMenu(const std::vector<std::string>& configs, int selectedConfig, int WINDOW, const std::string& status);
         static void updateScreenSize(int x, int y);
     
     private:

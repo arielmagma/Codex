@@ -258,3 +258,47 @@ void userInterface::printDebugFiles(const vector<File>& files, int selectedFile)
         cout << file << endl;
     }
 }
+
+void userInterface::printConfigMenu(const std::vector<std::string>& configs, int selectedConfig, int WINDOW, const std::string& status)
+{
+    cout << "+---------------------------------------------------------+" << endl;
+    cout << "|                       CONFIG MENU                       |" << endl;
+    cout << "+---------------------------------------------------------+" << endl;
+    cout << "|         [R] Revert changes     [S] Save changes         |" << endl;
+    cout << "|         [U] Update Field       [B] Back                 |" << endl;
+    cout << "+---------------------------------------------------------+" << endl;
+
+    int start = 0;
+    int end = configs.size();
+    if (configs.size() > WINDOW) // Calculate the window of files to show (defined in userInterface.h)
+    {
+        start = selectedConfig - WINDOW / 2;
+        end = start + WINDOW;
+
+        if (start < 0)
+        {
+            start = 0;
+            end = WINDOW;
+        }
+
+        if (end > configs.size())
+        {
+            end = configs.size();
+            start = configs.size() - WINDOW;
+        }
+    }
+
+    for (int i = start; i < end; i++)
+    {
+        if (i == selectedConfig)
+            cout << "| [X] ";
+        else
+            cout << "| [ ] ";
+
+        cout << configs[i] << std::string(52 - configs[i].length(), ' ') << "|" << endl;
+    }
+
+    cout << "+---------------------------------------------------------+" << endl;
+    cout << "| Status: " + status + ((status == "Saved") ? std::string(42, ' ') : std::string(38, ' ')) + " |" << endl;
+    cout << "+---------------------------------------------------------+" << endl;
+}
